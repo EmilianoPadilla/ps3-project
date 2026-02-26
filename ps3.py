@@ -11,6 +11,8 @@ import math
 import random
 import string
 
+# TEST FROM WINDOWS MACHINE
+
 VOWELS = 'aeiou'
 CONSONANTS = 'bcdfghjklmnpqrstvwxyz'
 HAND_SIZE = 7
