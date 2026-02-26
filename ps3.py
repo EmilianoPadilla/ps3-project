@@ -11,7 +11,7 @@ import math
 import random
 import string
 
-# TEST FROM WINDOWS MACHINE
+# TEST FROM MAC
 
 VOWELS = 'aeiou'
 CONSONANTS = 'bcdfghjklmnpqrstvwxyz'
