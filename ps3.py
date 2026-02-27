@@ -3,7 +3,7 @@
 # The 6.0001 Word Game
 # Created by: Kevin Luu <luuk> and Jenna Wiens <jwiens>
 #
-# Name          : <your name>
+# Name          : Emiliano Padilla
 # Collaborators : <your collaborators>
 # Time spent    : <total time>
 
@@ -93,34 +93,20 @@ def get_word_score(word, n):
     n: int >= 0
     returns: int >= 0
     """
-    
-    pass  # TO DO... Remove this line when you implement this function
-
-#
-# Make sure you understand how this function works and what it does!
-#
-def display_hand(hand):
-    """
-    Displays the letters currently in the hand.
-
-    For example:
-       display_hand({'a':1, 'x':2, 'l':3, 'e':1})
-    Should print out something like:
-       a x x l l l e
-    The order of the letters is unimportant.
-
-    hand: dictionary (string -> int)
-    """
-    
-    for letter in hand.keys():
-        for j in range(hand[letter]):
-             print(letter, end=' ')      # print all on the same line
-    print()                              # print an empty line
+    first = 0
+    word_low= word.lower()
+    for a in word_low:
+         first += SCRABBLE_LETTER_VALUES[a]
+    second = (7*len(word_low) - 3 * (n-len(word_low)))
+    if second < 1:
+        second = 1
+    return first*second
 
 #
 # Make sure you understand how this function works and what it does!
 # You will need to modify this for Problem #4.
 #
+
 def deal_hand(n):
     """
     Returns a random hand containing n lowercase letters.
@@ -149,8 +135,30 @@ def deal_hand(n):
     return hand
 
 #
+# Make sure you understand how this function works and what it does!
+#
+def display_hand(hand):
+    """
+    Displays the letters currently in the hand.
+
+    For example:
+       display_hand({'a':1, 'x':2, 'l':3, 'e':1})
+    Should print out something like:
+       a x x l l l e
+    The order of the letters is unimportant.
+
+    hand: dictionary (string -> int)
+    """
+    
+    for letter in hand.keys():
+        for j in range(hand[letter]):
+             print(letter, end=' ')      # print all on the same line
+    print()                              # print an empty line
+
+#
 # Problem #2: Update a hand by removing letters
 #
+
 def update_hand(hand, word):
     """
     Does NOT assume that hand contains every letter in word at least as
@@ -169,8 +177,21 @@ def update_hand(hand, word):
     hand: dictionary (string -> int)    
     returns: dictionary (string -> int)
     """
+    new_hand = hand.copy()   # Step 1: copy the original hand
+    word_low = word.lower()
+    for letter in word_low:
+        if letter.isalpha():
+            if letter in new_hand:
+                new_hand[letter] = max(0, new_hand[letter] - 1)
+        else:
+            print("Type letters, not symbols or numbers.")
+    return new_hand
 
-    pass  # TO DO... Remove this line when you implement this function
+
+hand = deal_hand(7)
+display_hand(hand)
+new_hand = update_hand(hand, 'quail')
+    
 
 #
 # Problem #3: Test word validity
