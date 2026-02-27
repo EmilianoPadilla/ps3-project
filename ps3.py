@@ -16,9 +16,10 @@ import string
 VOWELS = 'aeiou'
 CONSONANTS = 'bcdfghjklmnpqrstvwxyz'
 HAND_SIZE = 7
+WILDCARD: "aeiou"
 
 SCRABBLE_LETTER_VALUES = {
-    'a': 1, 'b': 3, 'c': 3, 'd': 2, 'e': 1, 'f': 4, 'g': 2, 'h': 4, 'i': 1, 'j': 8, 'k': 5, 'l': 1, 'm': 3, 'n': 1, 'o': 1, 'p': 3, 'q': 10, 'r': 1, 's': 1, 't': 1, 'u': 1, 'v': 4, 'w': 4, 'x': 8, 'y': 4, 'z': 10
+    'a': 1, 'b': 3, 'c': 3, 'd': 2, 'e': 1, 'f': 4, 'g': 2, 'h': 4, 'i': 1, 'j': 8, 'k': 5, 'l': 1, 'm': 3, 'n': 1, 'o': 1, 'p': 3, 'q': 10, 'r': 1, 's': 1, 't': 1, 'u': 1, 'v': 4, 'w': 4, 'x': 8, 'y': 4, 'z': 10, "*" : 0
 }
 
 # -----------------------------------
@@ -124,14 +125,17 @@ def deal_hand(n):
     hand={}
     num_vowels = int(math.ceil(n / 3))
 
-    for i in range(num_vowels):
+    for i in range(num_vowels -1):
         x = random.choice(VOWELS)
         hand[x] = hand.get(x, 0) + 1
+     
+    hand['*'] = 1   
     
     for i in range(num_vowels, n):    
         x = random.choice(CONSONANTS)
         hand[x] = hand.get(x, 0) + 1
-    
+
+
     return hand
 
 #
@@ -177,7 +181,7 @@ def update_hand(hand, word):
     hand: dictionary (string -> int)    
     returns: dictionary (string -> int)
     """
-    new_hand = hand.copy()   # Step 1: copy the original hand
+    new_hand = hand.copy()   
     word_low = word.lower()
     for letter in word_low:
         if letter.isalpha():
@@ -187,28 +191,40 @@ def update_hand(hand, word):
             print("Type letters, not symbols or numbers.")
     return new_hand
 
-
-hand = deal_hand(7)
-display_hand(hand)
-new_hand = update_hand(hand, 'quail')
-    
+word_list = load_words()
 
 #
 # Problem #3: Test word validity
 #
+
+
 def is_valid_word(word, hand, word_list):
     """
     Returns True if word is in the word_list and is entirely
     composed of letters in the hand. Otherwise, returns False.
     Does not mutate hand or word_list.
    
-    word: string
-    hand: dictionary (string -> int)
+    word: string 
     word_list: list of lowercase strings
     returns: boolean
     """
-
-    pass  # TO DO... Remove this line when you implement this function
+    word = word.lower()
+    letter_freq = get_frequency_dict(word)
+    for letter in letter_freq:
+        if letter_freq[letter] > hand.get(letter, 0):
+            return False
+    if "*" not in word:
+        if word in word_list:
+            return True
+        else:
+            return False
+    else: 
+        for vowel in VOWELS:
+            new_word = word.replace("*",vowel)
+            if new_word in word_list:
+                return True   
+        return False 
+                
 
 #
 # Problem #5: Playing a hand
