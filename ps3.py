@@ -16,7 +16,6 @@ import string
 VOWELS = 'aeiou'
 CONSONANTS = 'bcdfghjklmnpqrstvwxyz'
 HAND_SIZE = 7
-WILDCARD: "aeiou"
 
 SCRABBLE_LETTER_VALUES = {
     'a': 1, 'b': 3, 'c': 3, 'd': 2, 'e': 1, 'f': 4, 'g': 2, 'h': 4, 'i': 1, 'j': 8, 'k': 5, 'l': 1, 'm': 3, 'n': 1, 'o': 1, 'p': 3, 'q': 10, 'r': 1, 's': 1, 't': 1, 'u': 1, 'v': 4, 'w': 4, 'x': 8, 'y': 4, 'z': 10, "*" : 0
@@ -135,7 +134,6 @@ def deal_hand(n):
         x = random.choice(CONSONANTS)
         hand[x] = hand.get(x, 0) + 1
 
-
     return hand
 
 #
@@ -153,12 +151,11 @@ def display_hand(hand):
 
     hand: dictionary (string -> int)
     """
-    
+    print("Current hand:", end=' ')
     for letter in hand.keys():
         for j in range(hand[letter]):
-             print(letter, end=' ')      # print all on the same line
-    print()                              # print an empty line
-
+            print(letter, end=' ')   
+    print()
 #
 # Problem #2: Update a hand by removing letters
 #
@@ -184,11 +181,10 @@ def update_hand(hand, word):
     new_hand = hand.copy()   
     word_low = word.lower()
     for letter in word_low:
-        if letter.isalpha():
+        if letter.isalpha() or letter == "*":
             if letter in new_hand:
                 new_hand[letter] = max(0, new_hand[letter] - 1)
-        else:
-            print("Type letters, not symbols or numbers.")
+       
     return new_hand
 
 word_list = load_words()
@@ -213,17 +209,15 @@ def is_valid_word(word, hand, word_list):
     for letter in letter_freq:
         if letter_freq[letter] > hand.get(letter, 0):
             return False
+
     if "*" not in word:
-        if word in word_list:
-            return True
-        else:
-            return False
-    else: 
-        for vowel in VOWELS:
-            new_word = word.replace("*",vowel)
-            if new_word in word_list:
-                return True   
-        return False 
+       return word in word_list
+
+    for vowel in VOWELS:
+        new_word = word.replace("*",vowel)
+        if new_word in word_list:
+            return True   
+    return False 
                 
 
 #
@@ -236,78 +230,50 @@ def calculate_handlen(hand):
     hand: dictionary (string-> int)
     returns: integer
     """
-    
-    pass  # TO DO... Remove this line when you implement this function
+    total = 0
+    for value in hand.values():
+        total += value
+    return total
+    #return sum(hand.values()) would also work
+
+hand = deal_hand(9)
+print()
+print('─' * 60)
 
 def play_hand(hand, word_list):
 
-    """
-    Allows the user to play the given hand, as follows:
-
-    * The hand is displayed.
+    display_hand(hand)
+    total_points = 0
+    while calculate_handlen(hand) > 0:
+        word = input("Enter word or type '!!' to indicate you are finished: ")
+        if word == "!!":
+            break
+        else:
+            if is_valid_word(word, hand, word_list) == False:
+                print("That is not a valid word. Please choose another word: ")
+                hand = update_hand(hand, word)
+                display_hand(hand)
+                print()
+            else: 
+                points_earned = get_word_score(word, calculate_handlen(hand))
+                total_points += points_earned
+                print('"' + word + '"', "earned", points_earned, "points. Total: ", total_points, "points")
+                hand = update_hand(hand, word)           
+                display_hand(hand)
+                print()
     
-    * The user may input a word.
-
-    * When any word is entered (valid or invalid), it uses up letters
-      from the hand.
-
-    * An invalid word is rejected, and a message is displayed asking
-      the user to choose another word.
-
-    * After every valid word: the score for that word is displayed,
-      the remaining letters in the hand are displayed, and the user
-      is asked to input another word.
-
-    * The sum of the word scores is displayed when the hand finishes.
-
-    * The hand finishes when there are no more unused letters.
-      The user can also finish playing the hand by inputing two 
-      exclamation points (the string '!!') instead of a word.
-
-      hand: dictionary (string -> int)
-      word_list: list of lowercase strings
-      returns: the total score for the hand
-      
-    """
+    if calculate_handlen(hand) <= 0:
+        print("Ran out of letters. Total score: ", total_points)
+    else: 
+        print("Total score: ", total_points)
     
-    # BEGIN PSEUDOCODE <-- Remove this comment when you implement this function
-    # Keep track of the total score
+    print()
+
     
-    # As long as there are still letters left in the hand:
+
+play_hand(hand, word_list)
     
-        # Display the hand
-        
-        # Ask user for input
-        
-        # If the input is two exclamation points:
-        
-            # End the game (break out of the loop)
-
-            
-        # Otherwise (the input is not two exclamation points):
-
-            # If the word is valid:
-
-                # Tell the user how many points the word earned,
-                # and the updated total score
-
-            # Otherwise (the word is not valid):
-                # Reject invalid word (print a message)
-                
-            # update the user's hand by removing the letters of their inputted word
-            
-
-    # Game is over (user entered '!!' or ran out of letters),
-    # so tell user the total score
-
-    # Return the total score as result of function
-
-
-
-#
-# Problem #6: Playing a game
-# 
-
+    
 
 #
 # procedure you will use to substitute a letter in a hand
